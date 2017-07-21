@@ -1,0 +1,57 @@
+{
+
+	"id" : "Company",
+	"children" : [{
+			"id" : "Child 1",
+			"children" : [{
+					"id" : "Child A",
+					"children" : null
+				}, {
+					"id" : "Child B",
+					"children" : null
+				}
+
+			]
+		}, {
+
+			"id" : "Child 2",
+			"children" : [{
+					"id" : "Child C",
+					"children" : null
+				}, {
+					"id" : "Child D",
+					"children" : [{
+							"id" : "Child D1",
+							"children" : null
+						}, {
+							"id" : "Child D2",
+							"children" : null
+						}
+
+					]
+				}
+
+			]
+
+		}, {
+
+			"id" : "Child 3",
+			"children" : [{
+					"id" : "Child E",
+					"children" : null
+				}, {
+					"id" : "Child F",
+					"children" : [{
+							"id" : "Child F1",
+							"children" : null
+						}
+
+					]
+				}
+
+			]
+
+		}
+	]
+
+}
