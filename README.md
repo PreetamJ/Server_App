@@ -8,11 +8,19 @@ Download/clone projects to local machine from CLient_App and Server_App projects
 Client_App : https://github.com/PreetamJ/Client_App
 Server_App : https://github.com/PreetamJ/Server_App
 ```
+Edit application.properties file located under Server_App\src\main\resources for below properties if they do not match local MongoDB 
+```
+spring.data.mongodb.host=localhost
+spring.data.mongodb.port=27017
+spring.data.mongodb.database=poc_db
+```
+
 ### Prerequisites
 
 - Java 1.8
 - maven-4.0.0 
 - NodeJS-V8
+- MongoDB 
 
 ### Installing
 
@@ -24,13 +32,18 @@ Navigate to project folder and run below commands
 ```
 npm install
 ng build
-ng serve
+start /b ng serve
+
 ```
 
 Fix if it results in any errors while executing above commands
 
 **Server_App :**
- Write maven build steps to build and boot application
+ Navigate to project folder and run below commands
+ ```
+ mvn package
+ start /b mvn sprinf-boot:run
+ ```
 
 ## Running the tests
 
