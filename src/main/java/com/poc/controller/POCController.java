@@ -9,8 +9,12 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -19,10 +23,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poc.pojo.HierarchyTest;
 
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
+
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import com.mongodb.Mongo;
 
+@CrossOrigin
 @RestController
 public class POCController {
 	String classID;
@@ -32,36 +38,38 @@ public class POCController {
 
 	/**
 	 * This method reads and stored Hierarchy data into DB Returns message
-	 * whether JSON stored successfully or not. This method can be accessed
-	 * from client application with url "/readAndStore"
+	 * whether JSON stored successfully or not. This method can be accessed from
+	 * client application with url "/readAndStore"
 	 * 
 	 * @param httpSession
 	 * @return msg
 	 */
-	@CrossOrigin
-	@RequestMapping("/readAndStore")
-	public String readAndStore(HttpSession httpSession) {
+
+	@RequestMapping(value = "/readAndStore", method = RequestMethod.POST)
+	public String readAndStore(@RequestParam("file") MultipartFile file) {
 
 		System.out.println("Entering readJSON");
 		String msg = "";
+		String sendId = "";
 		try {
 
-			String filepath = "D:\\PreetamProj\\All Projects\\Server_App\\src\\main\\java\\com\\poc\\controller\\HierarchyTest.json";
+			if (!file.isEmpty()) {
+				String jsonMessage = null;
 
-			File jsonFile = new File(filepath);
+				try {
+					jsonMessage = new String(file.getBytes());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 
-			HierarchyTest hierarchyTest = new HierarchyTest();
-			ObjectMapper mapper = new ObjectMapper();
-
-			hierarchyTest = mapper.readValue(jsonFile, HierarchyTest.class);
-
-			System.out.println("Id is : " + hierarchyTest.getId());
-
-			classID = hierarchyTest.getId();
-			
-			hierarchyRepository.save(hierarchyTest);
-
+				ObjectMapper mapper = new ObjectMapper();
+				HierarchyTest hierarchyTest = new HierarchyTest();
+				hierarchyTest = mapper.readValue(jsonMessage, HierarchyTest.class);
+				hierarchyRepository.save(hierarchyTest);
+				sendId = hierarchyTest.getId();
+			}
 			msg = "JSON file HierarchyTest has been read successfully !!!";
+			System.out.println("sendId: " + sendId);
 
 		} catch (JsonParseException e) {
 			msg = "Error while parsing HierarchyTest.json ";
@@ -74,24 +82,26 @@ public class POCController {
 			e.printStackTrace();
 		}
 
-		return msg;
+		return sendId;
 	}
 
 	/**
-	 * This method retrieves data from Hierarchy collection from MongoDB
-	 * This method can be accessed from client application with url "/showTreeMap"
+	 * This method retrieves data from Hierarchy collection from MongoDB This
+	 * method can be accessed from client application with url "/showTreeMap"
 	 * 
 	 * @return HierarchyTest record inserted
 	 */
-	@CrossOrigin
 	@RequestMapping(value = "/showTreeMap", produces = "application/json")
-	public HierarchyTest showTreeMap() {
-		System.out.println("Entering showTreeMap");
+
+	public HierarchyTest showTreeMap(@RequestParam("id") String id) {
+		System.out.println("Entering showTreeMap: id is :" + id);
 
 		HierarchyTest p = new HierarchyTest();
 		MongoOperations mongoOps = new MongoTemplate(new SimpleMongoDbFactory(new Mongo(), "poc_db"));
-		p = mongoOps.findById(classID, HierarchyTest.class);
-		System.out.println("classId is :"+classID);
+
+		p = mongoOps.findById(id, HierarchyTest.class);
+
+		System.out.println("classId is :" + classID);
 
 		return p;
 
